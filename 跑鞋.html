@@ -1,0 +1,181 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+
+	<head>
+		<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+		<title>jQuery插件 图片360度旋转展示特效</title>
+		<style>
+			.PIC360 {
+				width: 500px;
+				height: 300px;
+				display: none;
+				overflow: hidden;
+				margin: 0 auto;
+			}
+			
+			.PIC360 UL,
+			.PIC360 LI {
+				margin: 0;
+				padding: 0;
+			}
+			
+			.PIC360 LI {
+				list-style: none;
+			}
+			
+			.PIC360 {
+				width: 400px;
+				margin: 10px auto;
+				border: 5px solid #CECECE;
+			}
+			body#wrap {
+            width: 100%;
+            height: 500px;
+        }
+		</style>
+
+	</head>
+
+	<body  id="wrap">
+	
+		<div class="PIC360">
+			<ul>
+				<li><img width=400 height=255 src="images/image1_1.jpg" /></li>
+				<li><img width=400 height=255 src="images/image1_2.jpg" /></li>
+				<li><img width=400 height=255 src="images/image1_3.jpg" /></li>
+				<li><img width=400 height=255 src="images/image1_4.jpg" /></li>
+				<li><img width=400 height=255 src="images/image1_5.jpg" /></li>
+				<li><img width=400 height=255 src="images/image1_6.jpg" /></li>
+				<li><img width=400 height=255 src="images/image1_7.jpg" /></li>
+				<li><img width=400 height=255 src="images/image1_8.jpg" /></li>
+				<li><img width=400 height=255 src="images/image1_9.jpg" /></li>
+				<li><img width=400 height=255 src="images/image1_10.jpg" /></li>
+				<li><img width=400 height=255 src="images/image1_11.jpg" /></li>
+				<li><img width=400 height=255 src="images/image1_12.jpg" /></li>
+				<li><img width=400 height=255 src="images/image1_13.jpg" /></li>
+				<li><img width=400 height=255 src="images/image1_14.jpg" /></li>
+				<li><img width=400 height=255 src="images/image1_15.jpg" /></li>
+				<li><img width=400 height=255 src="images/image1_16.jpg" /></li>
+				<li><img width=400 height=255 src="images/image1_17.jpg" /></li>
+				<li><img width=400 height=255 src="images/image1_18.jpg" /></li>
+			</ul>
+		</div>
+  
+	</body>
+<script src="jQuery/jquery-3.2.1.js" type="text/javascript" charset="utf-8"></script>
+</html>
+<script type="text/javascript">
+	
+
+(function($) { $.fn.pic360 = function() 
+	{ var first_img = this.find('img:first'); 
+	var all_img = this.find('img'); var img_count = all_img.length;
+	 if(img_count==0) return; 
+	 var img_width = first_img.width();
+	  var chg_width = parseInt(img_width/img_count);
+	  /* 感应区宽度*/
+	  var imgs_left = first_img.offset().left;
+	   this.toggle(); 
+	   all_img.toggle(); 
+	   first_img.toggle(); 
+	   this.width(img_width);
+	   /* 设置容器宽度 */ 
+	   this.height(first_img.height());
+	   /* 设置容器高度 */ 
+	   var mouseX = 0; 
+	   var start = false; 
+	   var step = 0;
+	    var curr_step = 0;
+	    /* 当前感应区 */ 
+	    var curr_img = 0;
+	    /* 当前图片 */ 
+	    this.mouseover(function(e){
+	    	/*鼠标移到本DIV*/ 
+	    	start = true; 
+	    	if(start){ mouseX = e.screenX; 
+	    		/* 获取当前感应区 */
+	    		 curr_step=parseInt((mouseX-imgs_left)/chg_width);
+	    		  step = curr_step; 
+	    		  }
+	    		   }) 
+	    		   this.mouseout(function(e){
+	    		   	/*鼠标移出本DIV*/
+	    		   	 start = false; 
+	    		   	 }) 
+	    		   	 this.mousemove(function(e)
+	    		   	 { 
+	    		   	 	if(start)
+	    		   	 	{ curr_step=parseInt((e.screenX-imgs_left)/chg_width);
+	    		   	 		 if(curr_step!=step){ $(all_img[curr_img]).toggle();
+	    		   	 		 	/* 隐藏当前图片 */
+	    		   	 		 	 if(curr_step>step){ curr_img = curr_img+1;
+	    		   	 		 	 	if(curr_img>=img_count) curr_img=0;
+	    		   	 		 	 	 }else{ curr_img = curr_img-1;
+	    		   	 		 	 	 	 if(curr_img<0) 
+	    		   	 		 	 	 	 	curr_img=img_count-1;
+	    		   	 		 	 	 	 	 } 
+	    		   	 		 	 	 	 	 $(all_img[curr_img]).toggle(); 
+											step=curr_step; 
+	  } 
+ 	}
+	 }) 
+	 }; 
+	 })
+	 (jQuery); 
+	 /** * 初始化所有Pic360对象 */
+	
+	$(document).ready(function(){ $( '.PIC360').each(function(){$(this).pic360() }) });
+	</script>
+	<script>
+		
+        (function() {
+            var oWrap = document.getElementById('wrap');
+            var max = 220; /*存储封值*/
+            var min = 180; /*存储谷值*/
+            var color = [max, min, min]; /*根据初始值红色来初始化数组*/
+            var timer = null;
+            var length = color.length;
+            var colorL, colorR
+            timer = setInterval(change, 20);
+            /*不容许在机组运行中直接修改代码*/
+            function change() {
+                /*在定时器中每过20毫秒 执行一次代码*/
+                /*检测一次数组*/
+                for (var i = 0; i < length; i++) {
+                    i %= length;
+                    var arrX = (i + 1) % length;
+                    var arrY = (i + 2) % length;
+                    if (color[i] == max && color[arrX] == min) {
+                        color[arrY]++;
+                    }
+                    if (color[i] == min && color[arrX] == max) {
+                        color[arrY]--;
+                    }
+                    colorL = '#' + convert(color[0]) + '' + convert(color[1]) + '' + convert(color[2]) + '';
+                    colorR = '#' + convert(color[2]) + '' + convert(color[0]) + '' + convert(color[1]) + '';
+
+                }
+                gColor(colorL, colorR);
+            }
+
+            function convert(sRgb) { /*rgb转换成HEX*/
+                var sRgb = sRgb;
+                var sHex = sRgb.toString(16);
+                sHex = sHex.length < 2 ? '0' + sHex : sHex
+                    /* 三目判断  判断条件 ？ 符合条件 ：不符合条件*/
+                return sHex;
+            }
+
+            function gColor(colorL, colorR) {
+                if (navigator.userAgent.match(/Trident/i) && navigator.userAgent.match(/MSIE [7|8|9].0/i)) {
+                    //通过正则检测浏览器信息是否是ie 并且 ie版本是不是 7或者8或者9 之一
+                    oWrap.style.filter = "progid:DXImageTransform.Microsoft.gradient( startColorstr=" + colorL + ", endColorstr=" + colorR + ",GradientType=0 )";
+                } else {
+                    oWrap.style.background = '-webkit-linear-gradient(left,' + colorL + ',' + colorR + ')' //谷歌
+                    oWrap.style.background = '-ms-linear-gradient(left,' + colorL + ',' + colorR + ')' //ie 10 11
+                }
+
+
+            }
+        })();
+    </script>
